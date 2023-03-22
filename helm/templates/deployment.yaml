@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.replicaCount }} 
+  
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      containers:
+      - name: {{ .Values.containername }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        ports:
+        - containerPort: {{ .Values.ports }}
+        env:
+          - name: POSTGRES_DB 
+            value: {{.Values.postgresql.auth.postgrepasss}}
+          - name: POSTGRES_USER
+            value: {{.Values.postgresql.auth.username}}
+          - name : POSTGRES_PASSWORD
+            value: {{.Values.postgresql.auth.password}}
+          - name : POSTGRES_HOSt
+            value: {{.Values.postgresql.auth.host}}
+            valuefrom: 
+              secretKeysref:
+                name: '{{ .Release.Name }}'
+                key: postgres-password
+     # nodeSelector:
+      #  name: dhruv
+   
+---
+# nginx-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+spec:
+   #type: LoadBalancer
+  selector:
+    app: {{ .Values.appName }}
+  ports:
+  - port: {{ .Values.service.port}}
+    targetPort: 8000
+      # nodePort: 30090
+---
+

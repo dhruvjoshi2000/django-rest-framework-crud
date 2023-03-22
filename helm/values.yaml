@@ -1,0 +1,14 @@
+image: 
+  repository: dhruvpjoshi1999/db
+  tag: dhruv
+containername: myapp1   
+replicaCount: 1  
+postgresql:
+  enable: true
+auth: 
+  postgresPassword: "dhruv" 
+  username: "dhruv"
+  password: "dhruv"
+  database: "dhruv"
+appname: myapp
+ports: 8000
